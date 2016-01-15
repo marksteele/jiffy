@@ -161,15 +161,20 @@ finish_encode(_, _) ->
 
 
 init() ->
-    PrivDir = case code:priv_dir(?MODULE) of
-        {error, _} ->
-            EbinDir = filename:dirname(code:which(?MODULE)),
-            AppPath = filename:dirname(EbinDir),
-            filename:join(AppPath, "priv");
-        Path ->
-            Path
-    end,
-    erlang:load_nif(filename:join(PrivDir, "jiffy"), 0).
+  Path = case appliation:get_env(code,sopath) of
+           {ok, CodePath} ->
+             CodePath;
+           _ ->
+             case code:priv_dir(?MODULE) of
+               {error, _} ->
+                 EbinDir = filename:dirname(code:which(?MODULE)),
+                 AppPath = filename:dirname(EbinDir),
+                 filename:join(AppPath, "priv");
+               CodePath ->
+                 CodePath
+             end
+         end,
+  erlang:load_nif(filename:join(Path, "jiffy"), 0).
 
 
 decode_loop(Data, Decoder, Val, Objs, Curr) ->
