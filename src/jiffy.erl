@@ -174,7 +174,7 @@ init() ->
                  CodePath
              end
          end,
-  erlang:load_nif(filename:join(Path, "jiffy"), 0).
+  erlang:load_nif(filename:join(Path, ?MODULE), 0).
 
 
 decode_loop(Data, Decoder, Val, Objs, Curr) ->
